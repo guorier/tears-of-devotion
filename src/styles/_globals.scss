@@ -1,0 +1,94 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-gov.min.css");
+@import "../resources/scss/component/output.scss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply font-pretendard font-normal text-base leading-inherit;
+  }
+
+  /* h1 {@apply text-6xl;}
+  h2 {@apply text-5xl;}
+  h3 {@apply text-4xl;}
+  h4 {@apply text-3xl;}
+  h5 {@apply text-2xl;}
+  h6 {@apply text-xl;} */
+
+  /* code {@apply p-[.15rem_.3rem] text-[14px] text-natural-800 bg-[#ececec];} */
+  i {@apply not-italic block;}
+  select:not([size]) {
+    @apply p-0;
+  }
+
+  #root input {
+    @apply px-3 focus:outline-0 focus:outline-offset-0 focus:ring-0;
+  }
+  #root input[type="checkbox"],
+  #root input[type="radio"] {
+    @apply px-0;
+  }
+
+  input::-webkit-search-decoration,
+  input::-webkit-search-cancel-button,
+  input::-webkit-search-results-button,
+  input::-webkit-search-results-decoration {
+    @apply cursor-pointer size-5 appearance-none bg-transparent bg-no-repeat bg-center bg-contain bg-search;
+  }
+
+  input[type="search"] {
+    @apply placeholder-natural-300 disabled:cursor-default disabled:bg-silver-200;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    @apply m-0 hidden appearance-none;
+  } /* 숫자 입력 필드의 버튼 없애기 */
+
+  input[type="range"],
+  input[type="range"]::-webkit-slider-runnable-track {
+    @apply w-full h-2 outline-0 rounded;
+  }
+  input[type="range"] {
+    @apply appearance-none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    @apply cursor-pointer -mt-1.5 size-5 bg-white rounded-full ring-2 ring-natural-300; /* transition: box-shadow 0.2s ease; */
+  }
+  input[type="range"]:focus::-webkit-slider-thumb {
+    @apply ring-2 ring-natural-800;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    @apply h-2 rounded;
+  }
+
+  input[type="checkbox"]:checked {
+    @apply bg-checkbox bg-no-repeat bg-center;
+  }
+  input[type="radio"]:checked {
+    @apply bg-none;
+  }
+  input[type="radio"]:focus {
+    --tw-ring-shadow: 0 0 #000 !important;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    @apply cursor-pointer absolute right-2 w-5 h-5 bg-none z-10 select-none;
+  }
+
+  .date-wrap * {
+    @apply font-pretendard;
+    font-family: var(--font-pretendard) !important;
+  }
+  .date-wrap > .react-datepicker-wrapper {
+    @apply w-full;
+    width: 100% !important;
+  }
+}
+
+@layer components {
+}
+@layer utilities {
+}

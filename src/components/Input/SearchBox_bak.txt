@@ -1,0 +1,116 @@
+"use client"
+import { ComponentProps, forwardRef, useEffect, useRef, useState } from "react";
+import { twMerge } from "tailwind-merge";
+import { DeepPartial } from "flowbite-react/lib/esm/types";
+import { mergeDeep } from "@/components/helpers/merge-deep";
+import Icons from '@/components/Icons';
+import SearchBoxConfig, { SearchBoxStyle } from "@/styles/theme/search.theme";
+
+import { usePathname, useRouter } from 'next/navigation';
+import { ISearchParams } from '@/interface/Search.interface';
+import { useAppDispatch } from '@/redux/hooks';
+import { openAlert } from '@/redux/features/alertSlice';
+
+
+interface SearchBoxProps extends Omit<ComponentProps<"input">, "ref"> {
+    theme?: DeepPartial<SearchBoxStyle>;
+    width?: keyof SearchBoxStyle["width"];
+    searchParams: ISearchParams;
+    searchType?: string | undefined;
+    isTwoWord?: boolean;
+}
+
+export const SearchBox = forwardRef<HTMLInputElement, SearchBoxProps>(
+    ({
+        className,
+        theme: customTheme = {},
+        width = "auto",
+        searchParams,
+        searchType,
+        isTwoWord,
+        ...props
+    }, ref) => {
+
+        const router = useRouter()
+        const path = usePathname();
+        const queryObj = new URLSearchParams(Object.entries(searchParams));
+        const dispatch = useAppDispatch();
+    
+        // [1-2] 검색
+        const searchKwdRef = useRef<HTMLInputElement | any>(null);
+    
+        useEffect(() => {
+            if (queryObj.get('searchKwd')) {
+                document?.getElementsByName('searchKwd')[0]?.focus();
+            }
+        }, [queryObj])
+    
+        //[2-1] input박스 데이터 셋팅
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            switch (e.target.name) {
+                case 'searchKwd':
+                    searchKwdRef.current = e.target.value;
+                    break;
+            }
+        };
+        //[2-2] 검색 엔터키 
+        const enterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.keyCode == 13) {
+                onSearch()
+            }
+        };
+    
+        const onSearch = () => {
+            if (isTwoWord) {
+                if (searchKwdRef.current.length === 1) {
+                    dispatch(openAlert({ content: 'Please enter at least 2 characters.' }));
+                    return;
+                }
+            }
+    
+            queryObj.delete('page');
+            if (searchKwdRef.current.value ?? searchKwdRef.current) {
+                // TODO : searchRef 수정 필요
+                const searchKwd = searchKwdRef.current.value ? searchKwdRef.current.value.toString() : searchKwdRef.current.toString()
+                queryObj.set('searchKwd', searchKwd);
+                if (searchType) {
+                    queryObj.set('searchType', searchType.toString());
+                }
+            }
+            else {
+                queryObj.delete('searchKwd');
+                queryObj.delete('searchType');
+            }
+            router.push(`${path}?${queryObj.toString()}`)
+        }
+
+
+        const theme = mergeDeep(SearchBoxConfig, customTheme);
+        const widthClass = theme.width?.[width] || `w-${String(width)}`;
+        
+        return (
+            <div className={twMerge(theme.base, widthClass, className)}>
+                <input type="search"
+                    placeholder="Search..."
+                    className={twMerge(theme.input, "py-1")}
+                    name="searchKwd"
+                    id="searchKwd"
+                    onChange={(e) => handleChange(e)}
+                    defaultValue={searchParams.searchKwd}
+                    key={`search${searchParams.searchKwd}`}
+                    ref={searchKwdRef}
+                    onKeyUp={enterKey}
+                    autoComplete="off"
+                    {...props}
+                />
+                <button type="submit"
+                    className={twMerge(theme.button)}
+                    disabled={props.disabled}
+                    onClick={onSearch}
+                ><Icons iName="iconSearch" className="size-4"/>
+                </button>
+            </div>
+        );
+    },
+);
+SearchBox.displayName = "SearchBox";

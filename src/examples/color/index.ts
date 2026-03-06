@@ -1,0 +1,1 @@
+export { icon } from './color.root';
