@@ -1,15 +1,11 @@
+import React from 'react'
 import type { Metadata } from 'next'
 import { ReduxProvider } from '@/redux/provider'
 
 import '@/styles/globals.css'
 import '@/styles/fonts/pretendard.css'
 
-import Navbar from '@/layout/Navbar';
-import Footer from '@/layout/Footer';
-
-import AlertDialog from '@/components/Alert/AlertDialog'
-import ConfirmDialog from '@/components/Alert/ConfirmDialog'
-import { Toaster } from "@/components/ui/sonner"
+import Footer from '@/layout/Footer'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -23,15 +19,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className='text-lato'>
+      <body className="text-lato">
         <ReduxProvider>
-          <Navbar />
           {children}
           <Footer />
-
-          <AlertDialog />
-          <ConfirmDialog />
-          <Toaster duration={10000} />
         </ReduxProvider>
       </body>
     </html>

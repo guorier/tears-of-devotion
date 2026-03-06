@@ -1,1 +1,0 @@
-export { textarea } from './textarea.root';

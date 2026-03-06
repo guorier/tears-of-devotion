@@ -1,1 +1,0 @@
-export { optiongroup } from './optiongroup.root';
