@@ -122,6 +122,10 @@ export default function MyPage() {
 
           <div className="rounded-xl border border-slate-200 overflow-hidden">
             <Table>
+            <colgroup>
+              <col style={{width:"100%"}}/>
+              <col style={{width:"200px"}}/>
+            </colgroup>
               <TableHeader className="bg-slate-50">
                 {table.getHeaderGroups().map((headerGroup)=>(
                   <TableRow key={headerGroup.id}>
