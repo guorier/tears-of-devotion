@@ -217,14 +217,68 @@ function DateField({
 
 export default function RegisterPage() {
   const router = useRouter();
+  const addressSearchButtonRef = useRef<HTMLButtonElement>(null);
   const detailAddressRef = useRef<HTMLInputElement>(null);
   const postcodeLayerRef = useRef<HTMLDivElement>(null);
+  const savedScrollYRef = useRef(0);
 
   const [form, setForm] = useState(INITIAL_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [isPostcodeReady, setIsPostcodeReady] = useState(false);
   const [postcodeLoadFailed, setPostcodeLoadFailed] = useState(false);
+
+  function openPostcodeModal() {
+    savedScrollYRef.current = window.scrollY;
+    window.scrollTo({ top: 0, behavior: "auto" });
+    setIsPostcodeOpen(true);
+  }
+
+  function closePostcodeModal(focusTarget: "search" | "detail" = "search") {
+    setIsPostcodeOpen(false);
+
+    window.setTimeout(() => {
+      if (focusTarget === "detail") {
+        detailAddressRef.current?.focus();
+        return;
+      }
+
+      addressSearchButtonRef.current?.focus();
+    }, 80);
+  }
+
+  useEffect(() => {
+    if (!isPostcodeOpen) {
+      return;
+    }
+
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+    const previousBodyLeft = document.body.style.left;
+    const previousBodyRight = document.body.style.right;
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = "0";
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      document.body.style.left = previousBodyLeft;
+      document.body.style.right = previousBodyRight;
+      window.scrollTo({ top: savedScrollYRef.current, behavior: "auto" });
+    };
+  }, [isPostcodeOpen]);
 
   useEffect(() => {
     if (!isPostcodeOpen || !isPostcodeReady || !postcodeLayerRef.current || !window.daum?.Postcode) {
@@ -262,11 +316,7 @@ export default function RegisterPage() {
           address: selectedAddress,
           extraAddress,
         }));
-        setIsPostcodeOpen(false);
-
-        window.setTimeout(() => {
-          detailAddressRef.current?.focus();
-        }, 80);
+        closePostcodeModal("detail");
       },
       width: "100%",
       height: "100%",
@@ -463,9 +513,10 @@ export default function RegisterPage() {
                     required
                   />
                   <button
+                    ref={addressSearchButtonRef}
                     type="button"
                     className="inline-flex shrink-0 items-center justify-center gap-2 rounded-[1rem] bg-[linear-gradient(135deg,#0f172a_0%,#1d4ed8_100%)] px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(37,99,235,0.24)] transition hover:-translate-y-0.5"
-                    onClick={() => setIsPostcodeOpen(true)}
+                    onClick={openPostcodeModal}
                   >
                     <Search className="h-4 w-4" />
                     주소 검색
@@ -558,7 +609,7 @@ export default function RegisterPage() {
         </div>
 
         {isPostcodeOpen ? (
-          <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/45 p-3 pt-12 backdrop-blur-sm sm:items-center sm:p-6">
+          <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 pt-5 backdrop-blur-sm sm:p-6 sm:pt-8">
             <div className="w-full max-w-[430px] max-h-[calc(100svh-1.5rem)] overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_25px_70px_rgba(15,23,42,0.28)] sm:max-h-[42rem]">
               <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5">
                 <div>
@@ -572,7 +623,7 @@ export default function RegisterPage() {
                   variant="ghost"
                   size="icon"
                   className="rounded-full text-slate-500 hover:bg-slate-100"
-                  onClick={() => setIsPostcodeOpen(false)}
+                  onClick={() => closePostcodeModal()}
                 >
                   <X className="h-5 w-5" />
                   <span className="sr-only">주소 검색 닫기</span>
