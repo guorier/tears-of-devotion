@@ -6,6 +6,11 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --app-bg: #eef4ff;
+    --app-ink: #0f172a;
+  }
+
   html {@apply font-pretendard font-normal text-base leading-inherit;}
 
   ::-webkit-scrollbar {
@@ -163,6 +168,44 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background:
+      radial-gradient(circle at top left, rgba(34, 197, 94, 0.22), transparent 28%),
+      radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 32%),
+      linear-gradient(180deg, #f8fbff 0%, var(--app-bg) 42%, #f9fbff 100%);
+    color: var(--app-ink);
+    min-height: 100vh;
+  }
+
+  a {
+    @apply no-underline;
+  }
+}
+
+@layer components {
+  .mobile-shell {
+    @apply relative min-h-screen overflow-hidden;
+  }
+
+  .mobile-shell__frame {
+    @apply relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col border-x border-slate-200/70 bg-white/70 shadow-[0_0_0_1px_rgba(255,255,255,0.45),0_30px_80px_rgba(15,23,42,0.14)] backdrop-blur;
+  }
+
+  .mobile-shell__content {
+    @apply relative flex-1 px-0;
+  }
+
+  .mobile-shell__glow {
+    @apply pointer-events-none absolute h-64 w-64 rounded-full blur-3xl;
+  }
+
+  .mobile-shell__glow--top {
+    @apply left-[-6rem] top-[-5rem];
+    background: rgba(34, 197, 94, 0.18);
+  }
+
+  .mobile-shell__glow--bottom {
+    @apply bottom-[-6rem] right-[-5rem];
+    background: rgba(124, 58, 237, 0.16);
   }
 }

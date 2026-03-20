@@ -1,5 +1,6 @@
 import '@/styles/globals.css'
-import Menu from '@/components/ui/Menu'
+import Header from '@/layout/Header'
+import Footer from '@/layout/Footer'
 
 export default function RootLayout({
   children
@@ -9,11 +10,15 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-
-        <Menu />
-
-        {children}
-
+        <div className="mobile-shell">
+          <div className="mobile-shell__glow mobile-shell__glow--top" />
+          <div className="mobile-shell__glow mobile-shell__glow--bottom" />
+          <div className="mobile-shell__frame">
+            <Header />
+            <main className="mobile-shell__content">{children}</main>
+            <Footer />
+          </div>
+        </div>
       </body>
     </html>
   )
